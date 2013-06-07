@@ -1,1 +1,0 @@
-*{margin:0;padding:0}.-slide{border:1px solid #f00;height:200px;overflow:hidden;width:500px;position:relative}.-slide-list{overflow:hidden}.-slide-list li{float:left;width:100%}.-slide-control{position:absolute;top:0;right:0;z-index:1}.-slide-btn-prev{position:absolute;left:0;top:50%;z-index:1}.-slide-btn-next{position:absolute;right:0;top:50%;z-index:1}
