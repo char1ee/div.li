@@ -7,9 +7,9 @@ The Open-Source for div.li website's developer.Use the Angularjs, nodejs, mongoD
 
 1.
 ```
-npm install
+npm install -g dawn
 ```
 2.
 ```
-node app.js
+dawn run 8000
 ```
