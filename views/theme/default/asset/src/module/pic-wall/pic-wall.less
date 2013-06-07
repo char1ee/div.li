@@ -1,0 +1,39 @@
+.pic-wall{
+  padding:14px 0;
+  .box{overflow: hidden;}
+  ul{margin-left:10px;font-size: 0;margin-right:-50px;/*hack*/}
+  li{
+    margin-right:35px;
+    font-size: @baseFontSize;
+    .f-inlineBlock();
+
+    a{outline: 0}
+    .pic-wall-img{
+      .f-size(158px,158px);
+      overflow: hidden;
+      display: table-cell;
+      border: 1px solid transparent;
+      vertical-align: middle;
+      border: 1px solid @color-9;
+      // box-shadow: 1px 1px 1px #000;
+      img{
+        .f-maxWidth(100%);
+        width:100%;//hack firefox
+        height:auto;
+        display: block;
+      }
+    }
+    .pic-wall-title{
+      display: block;
+      text-align: center;
+      margin-top: 12px;
+      .f-textShadow();
+    }
+    &:hover{
+      .pic-wall-img{
+        .f-opacity(.8);
+      }
+    }
+  }
+
+}
