@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>dependencies</key>
+	<dict>
+		<key>express</key>
+		<string>3.2.0</string>
+		<key>jade</key>
+		<string>*</string>
+	</dict>
+	<key>name</key>
+	<string>application-name</string>
+	<key>private</key>
+	<true/>
+	<key>scripts</key>
+	<dict>
+		<key>start</key>
+		<string>node app.js</string>
+	</dict>
+	<key>version</key>
+	<string>0.0.1</string>
+</dict>
+</plist>

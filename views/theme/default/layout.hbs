@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+{{#if pageCls}}
+	<html class="i-{{pageCls}}">
+{{else}}
+	<html class="i-home">
+{{/if}}
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title>{{title}}</title>
+	<link rel="stylesheet" href="{{config.THEME_ASSET_DIR}}/main.css">
+	<meta name="description" content="{{config.DESCRIPTION}}" />
+	<meta name="keywords" content="{{config.KEYWORDS}}" />
+	<!--[if IE 8]>
+		<script src="{{config.THEME_ASSET_DIR}}/lib/html5shiv/html5shiv.js"></script>
+	<![endif]-->
+</head>
+<body>
+<div class="layout-container">
+	{{{body}}}
+<div class="layout-container-fix"></div></div><!-- / layout-container -->
+<footer class="footer">
+
+</footer>
+<script src="{{config.THEME_ASSET_DIR}}/lib/seajs/sea.js" data-main="{{config.THEME_ASSET_DIR}}/main.js"></script>
+</body>
+</html>

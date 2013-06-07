@@ -1,0 +1,641 @@
+@import './config';
+// @import 'grid';
+// @代码风格:能横写的代码都写在一行，实在太长不易阅读的才换行，
+//          缩进使用tab.
+//          不可以使用id作用于样式，id全部留给js使用，js中如需要使用class操作多个节点，js使用的样式以j-开头，
+//          样式顺序遵循 先布局后自我样式顺序,
+//          e.g (margin position left...)—>(padding...)—>(border...)—>(width height...)—>(background...)...,
+//          css3各浏览器前缀竖写，遵循CFOS (C:chrome/safari)(F:firefox)(O:opera)(S:microsoft ie)顺序.
+//          zindex管理：
+//          局部浮动元素：10-20
+//          整体浮动元素：20-30
+//          全局弹出框  ：30-40
+// @命名规范：全站通用的样式都以f-命名开头，取fucntion之义，
+//           不可重复使用以防止污染其它样式的css，以i-开头 ，取id之义
+//           每个模板页面的body处需加一个n-开头的命名的class，如n-index，取namespace之义，本页独有样式都需要以其为祖先来继承.
+
+
+////////////////////////////////////////////////////////
+// @名称： function.less
+// @作者： 耗子
+// @功能： 用于解决浏览器各种兼容问题
+.f-fl(){
+    float: left;
+    _display:inline;
+}
+.f-fr(){
+    float:right;
+    _display:inline;
+}
+// 清除浮动造成的影响
+.f-clearfix(){
+    // *zoom:1;
+    &:after{
+        // visibility: hidden;
+        display: block;
+        // font-size: 0;
+        content: '';
+        clear: both;
+        // height: 0;
+    }
+}
+//块状元素inline-block(内联元素ie67原生支持inline-block)
+.f-inlineBlock(){
+        display: inline-block;
+     *display: inline;
+     *zoom:1;
+}
+
+// 清除inline-block元素代码换行造成的空隙
+.f-ib() {font-size:0;
+    & * {font-size:12px;}
+}
+//单行文字超出省略号
+.f-textOverflow() {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+// 超长英文自动换行
+.f-wordBreak(){
+    word-wrap:break-word;word-break:break-all;
+}
+// 常用描边
+.f-border(@color, @width:1px, @type:solid){
+        border:@width @type @color;
+}
+
+//定义矩形
+.f-size(@width,@height){
+        width:@width;
+        height:@height;
+}
+//定义正方形
+.f-square(@width){
+        .f-size(@width,@width)
+}
+//居中容器
+.f-centerBox(@width:@maxWidth){
+    width:@width;
+    margin:0 auto;
+}
+//fuck ie6
+.f-minWidth(@width){
+        min-width:@width;
+             _width : ~"expression((documentElement.clientWidth<@{width})?'@{width}':'auto')";
+}
+//min height 只有min-height性能消耗小，你们懂的
+.f-minHeight(@height){
+        min-height:@height;
+             _height:@height;
+}
+//max width
+.f-maxWidth(@width){
+        max-width : @width;
+             _width : ~"expression((documentElement.clientWidth>@{width})?'@{width}':'auto')";
+
+}
+//max height
+.f-maxHeight(@height){
+         max-height : @height;
+             _height : ~"expression((documentElement.clientHeight>@{height})?'@{height}':'auto')";
+}
+//fixed 顶部静止 必须为body设置_background:url(about:blank);或图片
+.f-fixed(){
+        position: fixed;
+     _position:absolute;
+}
+//顶部静止
+.f-fixedTop(@top : 0){
+        position: fixed;
+     _position: absolute;
+        top:@top;
+     _top:~"expression(eval(document.documentElement.scrollTop + @{top}))";
+}
+//底部静止  性能比顶部静止更差 ╮(╯▽╰)╭
+.f-fixedBottom(@bottom : 0){
+        position: fixed;
+     _position:absolute;
+        bottom:@bottom;
+     _top:~"expression(eval(document.documentElement.scrollTop+document.documentElement.clientHeight-this.offsetHeight-(parseInt(this.currentStyle.marginTop,10)||0)-(parseInt(this.currentStyle.marginBottom,10)||0)) - @{bottom})";
+}
+
+// css3属性处理
+// opacity 透明处理
+.f-opacity(@opacity: 1) {
+        @_opacity :@opacity*100;
+        filter: ~"alpha(opacity=@{_opacity})";
+        opacity: @opacity;
+}
+
+// @demo： .f-backgroundOpacity(255,255,255,0.8)
+//      cc = Math.floor(0.8 * 255).toString(16)
+.f-backgroundOpacity(@red, @green, @blue, @alpha:1){
+        @filtercolor:`(_f = function(d){ var v = (parseInt(d)|0).toString(16);return v.length<2 ? "0"+v : v;},'#'+_f(@{alpha}*255) + _f(@{red}) + _f(@{green})+ _f(@{blue}))`;
+        background-color: ~'rgba(@{red},@{green},@{blue},@{alpha})';
+        -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='@{filtercolor}',endColorstr='@{filtercolor}')";
+        filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr='@{filtercolor}',endColorstr='@{filtercolor}')";
+}
+
+//border-radius 圆角
+.f-borderRadius(@radius: "5px") {
+        -webkit-border-radius: ~"@{radius}";
+             -moz-border-radius: ~"@{radius}";
+                        border-radius: ~"@{radius}";
+}
+
+// box-shadow
+.f-boxShadow(@shadow: "0 1px 3px rgba(0,0,0,.25)") {
+        -webkit-box-shadow: ~"@{shadow}";
+             -moz-box-shadow: ~"@{shadow}";
+                        box-shadow: ~"@{shadow}";
+}
+
+// transitions
+.f-transition(@transition) {
+        -webkit-transition: ~"@{transition}";
+             -moz-transition: ~"@{transition}";
+                -ms-transition: ~"@{transition}";
+                 -o-transition: ~"@{transition}";
+                        transition: ~"@{transition}";
+}
+
+// transformations
+.f-rotate(@degrees) {
+        -webkit-transform: rotate(@degrees);
+             -moz-transform: rotate(@degrees);
+                -ms-transform: rotate(@degrees);
+                 -o-transform: rotate(@degrees);
+                        transform: rotate(@degrees);
+                             filter: ~'progid:DXImageTransform.Microsoft.BasicImage(rotation=3)';
+
+}
+.f-scale(@ratio) {
+        -webkit-transform: scale(@ratio);
+             -moz-transform: scale(@ratio);
+                -ms-transform: scale(@ratio);
+                 -o-transform: scale(@ratio);
+                        transform: scale(@ratio);
+}
+.f-translate(@x: 0, @y: 0) {
+        -webkit-transform: translate(@x, @y);
+             -moz-transform: translate(@x, @y);
+                -ms-transform: translate(@x, @y);
+                 -o-transform: translate(@x, @y);
+                        transform: translate(@x, @y);
+}
+.f-skew(@x: 0, @y: 0) {
+        -webkit-transform: skew(@x, @y);
+             -moz-transform: skew(@x, @y);
+                -ms-transform: skew(@x, @y);
+                 -o-transform: skew(@x, @y);
+                        transform: skew(@x, @y);
+}
+.f-translate3d(@x: 0, @y: 0, @z: 0) {
+        -webkit-transform: translate(@x, @y, @z);
+             -moz-transform: translate(@x, @y, @z);
+                -ms-transform: translate(@x, @y, @z);
+                 -o-transform: translate(@x, @y, @z);
+                        transform: translate(@x, @y, @z);
+}
+
+// background clip
+.f-backgroundClip(@clip) {
+        -webkit-background-clip: @clip;
+             -moz-background-clip: @clip;
+                        background-clip: @clip;
+}
+
+// background size
+.f-backgroundSize(@size){
+        -webkit-background-size: @size;
+             -moz-background-size: @size;
+                 -o-background-size: @size;
+                        background-size: @size;
+}
+
+
+// box sizing
+.f-boxSizing(@boxmodel) {
+        -webkit-box-sizing: @boxmodel;
+             -moz-box-sizing: @boxmodel;
+                -ms-box-sizing: @boxmodel;
+                        box-sizing: @boxmodel;
+}
+
+// user select
+.f-userSelect(@select) {
+        -webkit-user-select: @select;
+             -moz-user-select: @select;
+                 -o-user-select: @select;
+                        user-select: @select;
+}
+
+// resize anything
+.f-resizable(@direction: both) {
+        resize: @direction; // Options: horizontal, vertical, both
+        overflow: auto;
+}
+
+// content Columns
+.f-contentColumns(@columnCount, @columnGap: @gridColumnGutter) {
+        -webkit-column-count: @columnCount;
+             -moz-column-count: @columnCount;
+                        column-count: @columnCount;
+            -webkit-column-gap: @columnGap;
+                 -moz-column-gap: @columnGap;
+                            column-gap: @columnGap;
+}
+
+// Gradients 渐变
+#gradient {
+    .horizontal(@startColor: #555, @endColor: #333) {
+        background-color: @endColor;
+        background-image: -moz-linear-gradient(left, @startColor, @endColor); // FF 3.6+
+        background-image: -webkit-gradient(linear, 0 0, 100% 0, from(@startColor), to(@endColor)); // Safari 4+, Chrome 2+
+        background-image: -webkit-linear-gradient(left, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+        background-image: -o-linear-gradient(left, @startColor, @endColor); // Opera 11.10
+        background-image: linear-gradient(to right, @startColor, @endColor); // Standard, IE10
+        background-repeat: repeat-x;
+        filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=1)",argb(@startColor),argb(@endColor))); // IE9 and down
+    }
+    .vertical(@startColor: #555, @endColor: #333) {
+        background-color: mix(@startColor, @endColor, 60%);
+        background-image: -moz-linear-gradient(top, @startColor, @endColor); // FF 3.6+
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@startColor), to(@endColor)); // Safari 4+, Chrome 2+
+        background-image: -webkit-linear-gradient(top, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+        background-image: -o-linear-gradient(top, @startColor, @endColor); // Opera 11.10
+        background-image: linear-gradient(to bottom, @startColor, @endColor); // Standard, IE10
+        background-repeat: repeat-x;
+        filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",argb(@startColor),argb(@endColor))); // IE9 and down
+    }
+    .directional(@startColor: #555, @endColor: #333, @deg: 45deg) {
+        background-color: @endColor;
+        background-repeat: repeat-x;
+        background-image: -moz-linear-gradient(@deg, @startColor, @endColor); // FF 3.6+
+        background-image: -webkit-linear-gradient(@deg, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+        background-image: -o-linear-gradient(@deg, @startColor, @endColor); // Opera 11.10
+        background-image: linear-gradient(@deg, @startColor, @endColor); // Standard, IE10
+    }
+    .horizontal-three-colors(@startColor: #00b3ee, @midColor: #7a43b6, @colorStop: 50%, @endColor: #c3325f) {
+        background-color: mix(@midColor, @endColor, 80%);
+        background-image: -webkit-gradient(left, linear, 0 0, 0 100%, from(@startColor), color-stop(@colorStop, @midColor), to(@endColor));
+        background-image: -webkit-linear-gradient(left, @startColor, @midColor @colorStop, @endColor);
+        background-image: -moz-linear-gradient(left, @startColor, @midColor @colorStop, @endColor);
+        background-image: -o-linear-gradient(left, @startColor, @midColor @colorStop, @endColor);
+        background-image: linear-gradient(to right, @startColor, @midColor @colorStop, @endColor);
+        background-repeat: no-repeat;
+        filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",argb(@startColor),argb(@endColor))); // IE9 and down, gets no color-stop at all for proper fallback
+    }
+
+    .vertical-three-colors(@startColor: #00b3ee, @midColor: #7a43b6, @colorStop: 50%, @endColor: #c3325f) {
+        background-color: mix(@midColor, @endColor, 80%);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@startColor), color-stop(@colorStop, @midColor), to(@endColor));
+        background-image: -webkit-linear-gradient(@startColor, @midColor @colorStop, @endColor);
+        background-image: -moz-linear-gradient(top, @startColor, @midColor @colorStop, @endColor);
+        background-image: -o-linear-gradient(@startColor, @midColor @colorStop, @endColor);
+        background-image: linear-gradient(@startColor, @midColor @colorStop, @endColor);
+        background-repeat: no-repeat;
+        filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",argb(@startColor),argb(@endColor))); // IE9 and down, gets no color-stop at all for proper fallback
+    }
+    .radial(@innerColor: #555, @outerColor: #333) {
+        background-color: @outerColor;
+        background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(@innerColor), to(@outerColor));
+        background-image: -webkit-radial-gradient(circle, @innerColor, @outerColor);
+        background-image: -moz-radial-gradient(circle, @innerColor, @outerColor);
+        background-image: -o-radial-gradient(circle, @innerColor, @outerColor);
+        background-repeat: no-repeat;
+    }
+    .striped(@color: #555, @angle: 45deg) {
+        background-color: @color;
+        background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(.25, rgba(255,255,255,.15)), color-stop(.25, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255,255,255,.15)), color-stop(.75, rgba(255,255,255,.15)), color-stop(.75, transparent), to(transparent));
+        background-image: -webkit-linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+        background-image: -moz-linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+        background-image: -o-linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+        background-image: linear-gradient(@angle, rgba(255,255,255,.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.15) 75%, transparent 75%, transparent);
+    }
+}
+// Reset filters for IE
+.reset-filter() {
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(enabled = false)"));
+}
+
+.f-textShadow(@color: #fff){
+    text-shadow:1px 1px @color;
+}
+
+//flex
+#flex {
+    .f-init(){
+        display: -webkit-box;      // OLD - iOS 6-, Safari 3.1-6
+        display: -moz-box;         // OLD - Firefox 19- (buggy but mostly works)
+        display: -ms-flexbox;      // TWEENER - IE 10
+        display: -webkit-flex;     // NEW - Chrome
+        display: flex;             // NEW, Spec - Opera 12.1, Firefox 20+
+    }
+    .f-flex(@per:1){
+        -webkit-box-flex: @per;        // OLD - iOS 6-, Safari 3.1-6
+           -moz-box-flex: @per;        // OLD - Firefox 19-
+            -webkit-flex: @per;        // Chrome
+                -ms-flex: @per;        // IE 10
+                    flex: @per;        // NEW, Spec - Opera 12.1, Firefox 20+
+    }
+    .f-order(@order:1){
+        -webkit-box-ordinal-group: @order;
+           -moz-box-ordinal-group: @order;
+                   -ms-flex-order: @order;
+                    -webkit-order: @order;
+                            order: @order;
+    }
+}
+
+
+
+//debug
+.f-debug(@color:#f00){
+    .f-border(@color);
+}
+
+
+
+
+
+
+
+
+
+
+
+.f-reset(){
+    //  @名称: reset.less
+    //  @功能: 初始化各html标签，使其在所有浏览器下保持一致
+
+    // 配置文件定义在config.less里
+
+    // 防止用户自定义背景颜色对网页的影响
+    html{color:@baseColor;background:#fff;font-size: 100%;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: none;.f-wordBreak()}
+
+    // 内外边距通常让各个浏览器样式的表现位置不同
+    body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td,hr,button,article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section {
+        margin:0;padding:0;
+    }
+    // 重设 HTML5 标签, IE 需要在 js 中 createElement(TAG)
+    article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section {display:block;}
+    // HTML5 媒体文件跟 img 保持一致
+    audio,canvas,video {display: inline-block;*display: inline;*zoom:1;}
+    audio:not([controls]) {display: none;}
+    // 要注意表单元素并不继承父级 font 的问题
+    body,button,input,select,textarea{font:@baseFontSize~"/@{baseLineHeight}" @baseFontFamily;}
+    input,select,textarea{font-size:100%;background:#fff;}
+    // 去掉各Table  cell 的边距并让其边重合，防止表格内文字不能换行
+    table{border-collapse:collapse;border-spacing:0;table-layout:fixed;word-wrap:break-word;word-break:break-all;width:100%;vertical-align:top}
+    th,td{vertical-align: top}
+
+    // IE bug fixed: th 不继承 text-align
+    th{text-align:inherit;}
+    // 去除默认边框
+    fieldset,img{border:none;}
+    // ie6 7 8(q) bug 显示为行内表现
+    iframe{display:block;}
+    // 去掉 firefox 下此元素的边框
+    abbr,acronym{border:none;font-variant:normal;}
+    // 一致的 del 样式
+    del {text-decoration:line-through;}
+    address,caption,cite,code,dfn,em,th,var {font-style:normal;font-weight:500;}
+    // 去掉列表前的标识, li 会继承(在ie7下有时会不继承)
+    ol,ul,li {list-style:none;}
+    // 对齐是排版最重要的因素, 别让什么都居中
+    caption,th {text-align:left;}
+    // 让标题都自定义, 适应多个系统应用
+    h1,h2,h3,h4,h5,h6 {font-size:100%;font-weight:700;}
+    q:before,q:after {content:'';}
+    // 统一上标和下标
+    sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline;}
+    sup {top: -0.5em;}
+    sub {bottom: -0.25em;}
+
+    // 默认不显示下划线，保持页面简洁
+    ins,a { text-decoration:none;}
+    a{color:@linkColor;}
+    a:focus {outline: thin dotted #333;outline: 5px auto -webkit-focus-ring-color;outline-offset: -2px;}
+    a:hover,a:active {outline: 0;text-decoration:underline;}
+    a:hover{color:@linkColorHover;}
+    //单字母勾子元素
+    s,u,q,i,b{text-decoration:none;font-style:normal;font-weight:normal}
+
+    //文本框美化 增加高级浏览器呼吸效果（textarea同样适用)
+    .text,textarea{ border:1px solid #ccc;vertical-align:top;color:#333}
+    .text{height:25px;padding-left:6px;line-height:~"25px\9"}
+    textarea{padding:4px 0 7px 6px;overflow:auto}
+    .text:hover,textarea:hover{border-color:#999}
+    .text:focus, textarea:focus {border-color:#d1ba8a;.f-transition("border linear .2s,-moz-box-shadow linear .5s");.f-boxShadow("0 0 3px rgba(209,187,138,.3)");}
+    .text.grey,textarea.grey{color:#ccc !important}
+     //文本框readonly样式
+     .text.readonly, textarea.readonly{border-color:#ccc;background:#F1F1F1;color:#ccc;cursor:default;resize:none;.f-boxShadow("0 0 0");}
+
+     //按钮
+     button,.btn{border:none;cursor: pointer;}
+    ::selection {
+        text-shadow:none;
+        background: @blue;
+        color:@white;
+    }
+
+    .clear{.f-clearfix();}
+    // 居中盒容器
+    .-box-fluid,.-box{
+        margin:0 auto;
+        .f-clearfix();
+        .-left{float:left;}
+        .-right{float: right}
+        .inline{.f-inlineBlock}
+    }
+
+    .-box-fluid{
+        width:95%;
+        max-width:@maxWidth;
+        min-width:@minWidth;
+    }
+    .-box{
+        width: @minWidth;
+        max-width:@minWidth;
+    }
+    // // 流式列布局
+    // .makeFluid();
+
+    //圣杯布局
+    .-fluid-cup{
+        @leftWidth:260px;
+        width:100%;
+        .f-clearfix();
+        .-main{
+            float: left;
+            width: 100%;
+        }
+        .-main-wrap{
+            // border: 1px solid #f00;
+            margin-left:@leftWidth;
+        }
+        .-sub{
+            width:@leftWidth;
+            float:left;
+            margin-left: -100%
+        }
+        .-extra{
+
+        }
+    }
+
+    .input-block-level() {
+      display: block;
+      width: 100%;
+      // min-height: @inputHeight; // Make inputs at least the height of their button counterpart (base line-height + padding + border)
+      // .f-box-sizing(border-box); // Makes inputs behave like true block-level elements
+    }
+
+
+    //
+    // Grid system
+    // --------------------------------------------------
+    #grid {
+
+      .core (@gridColumnWidth, @gridGutterWidth) {
+
+        .spanX (@index) when (@index > 0) {
+          .span@{index} { .span(@index); }
+          .spanX(@index - 1);
+        }
+        .spanX (0) {}
+
+        .offsetX (@index) when (@index > 0) {
+          .offset@{index} { .offset(@index); }
+          .offsetX(@index - 1);
+        }
+        .offsetX (0) {}
+
+        .offset (@columns) {
+          margin-left: (@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns + 1));
+        }
+
+        .span (@columns) {
+          width: (@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns - 1));
+        }
+
+        .row {
+          margin-left: @gridGutterWidth * -1;
+          .f-clearfix();
+        }
+
+        [class*="span"] {
+          float: left;
+          min-height: 1px; // prevent collapsing columns
+          margin-left: @gridGutterWidth;
+        }
+
+        // Set the container width, and override it for fixed navbars in media queries
+        .container,
+        .navbar-static-top .container,
+        .navbar-fixed-top .container,
+        .navbar-fixed-bottom .container { .span(@gridColumns); }
+
+        // generate .spanX and .offsetX
+        .spanX (@gridColumns);
+        .offsetX (@gridColumns);
+
+      }
+
+      .fluid (@fluidGridColumnWidth, @fluidGridGutterWidth) {
+
+        .spanX (@index) when (@index > 0) {
+          .span@{index} { .span(@index); }
+          .spanX(@index - 1);
+        }
+        .spanX (0) {}
+
+        .offsetX (@index) when (@index > 0) {
+          .offset@{index} { .offset(@index); }
+          .offset@{index}:first-child { .offsetFirstChild(@index); }
+          .offsetX(@index - 1);
+        }
+        .offsetX (0) {}
+
+        .offset (@columns) {
+          margin-left: (@fluidGridColumnWidth * @columns) + (@fluidGridGutterWidth * (@columns - 1)) + (@fluidGridGutterWidth*2);
+          *margin-left: (@fluidGridColumnWidth * @columns) + (@fluidGridGutterWidth * (@columns - 1)) - (.5 / @gridRowWidth * 100 * 1%) + (@fluidGridGutterWidth*2) - (.5 / @gridRowWidth * 100 * 1%);
+        }
+
+        .offsetFirstChild (@columns) {
+          margin-left: (@fluidGridColumnWidth * @columns) + (@fluidGridGutterWidth * (@columns - 1)) + (@fluidGridGutterWidth);
+          *margin-left: (@fluidGridColumnWidth * @columns) + (@fluidGridGutterWidth * (@columns - 1)) - (.5 / @gridRowWidth * 100 * 1%) + @fluidGridGutterWidth - (.5 / @gridRowWidth * 100 * 1%);
+        }
+
+        .span (@columns) {
+          width: (@fluidGridColumnWidth * @columns) + (@fluidGridGutterWidth * (@columns - 1));
+          *width: (@fluidGridColumnWidth * @columns) + (@fluidGridGutterWidth * (@columns - 1)) - (.5 / @gridRowWidth * 100 * 1%);
+        }
+
+        .row-fluid {
+          width: 100%;
+          .f-clearfix();
+          [class*="span"] {
+            // .input-block-level();
+            float: left;
+            margin-left: @fluidGridGutterWidth;
+            *margin-left: @fluidGridGutterWidth - (.5 / @gridRowWidth * 100 * 1%);
+          }
+          [class*="span"]:first-child {
+            margin-left: 0;
+          }
+
+          // Space grid-sized controls properly if multiple per line
+          .controls-row [class*="span"] + [class*="span"] {
+            margin-left: @fluidGridGutterWidth;
+          }
+
+          // generate .spanX and .offsetX
+          .spanX (@gridColumns);
+          .offsetX (@gridColumns);
+        }
+
+      }
+
+      .input(@gridColumnWidth, @gridGutterWidth) {
+
+        .spanX (@index) when (@index > 0) {
+          input.span@{index}, textarea.span@{index}, .uneditable-input.span@{index} { .span(@index); }
+          .spanX(@index - 1);
+        }
+        .spanX (0) {}
+
+        .span(@columns) {
+          width: ((@gridColumnWidth) * @columns) + (@gridGutterWidth * (@columns - 1)) - 14;
+        }
+
+        input,
+        textarea,
+        .uneditable-input {
+          margin-left: 0; // override margin-left from core grid system
+        }
+
+        // Space grid-sized controls properly if multiple per line
+        .controls-row [class*="span"] + [class*="span"] {
+          margin-left: @gridGutterWidth;
+        }
+
+        // generate .spanX
+        .spanX (@gridColumns);
+
+      }
+    }
+    // Fixed (940px)
+    #grid > .core(@gridColumnWidth, @gridGutterWidth);
+    // Fluid (940px)
+    #grid > .fluid(@fluidGridColumnWidth, @fluidGridGutterWidth);
+
+    .pull-left{
+        float: left;
+    }
+    .pull-right{
+        float: right;
+    }
+}
