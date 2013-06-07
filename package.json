@@ -1,0 +1,34 @@
+{
+  "name": "dawn",
+  "version": "0.0.2",
+  "description": "The angularjs test and develop for div.li",
+  "main": "index.js",
+  "bin":{
+    "dawn": "./bin/dawn"
+  },
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "dependencies":{
+    "karma": ">0.8.5",
+    "angular-phonecat":"git://github.com/angular/angular-phonecat.git#commit-ish"  
+  },
+  "scripts": {
+    "test": "/test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lichenhao/div.li.git"
+  },
+  "keywords": [
+    "angularjs",
+    "node"
+  ],
+  "author": "Alfred",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/lichenhao/div.li/issues"
+  }
+}
