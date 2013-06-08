@@ -1,6 +1,6 @@
 {
   "name": "dawn",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "The angularjs test and develop for div.li",
   "main": "index.js",
   "bin":{
@@ -11,8 +11,7 @@
     "test": "tests"
   },
   "dependencies":{
-    "karma": ">0.8.5",
-    "angular-phonecat":"git://github.com/angular/angular-phonecat.git#commit-ish"  
+    "karma": ">0.8.5"
   },
   "scripts": {
     "test": "/test/test.js"
