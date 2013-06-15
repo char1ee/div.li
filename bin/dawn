@@ -1,1 +1,22 @@
 #!/usr/bin/env node
+var $Cmd 	= require('commander');
+var $sys 		= require('../libs/system.js');
+$Cmd
+	.version('1.1.1')
+	.option('-r,-root', 'View the root path', function() {
+		console.log($Sys.root);
+		process.exit(0);
+	})
+	.option('-p, -port', 'View the port', function (port) {
+		console.log($Sys.port);	
+	})
+	.command('start <path> [port]')
+	.description('Start the app with the root path and the port')
+	.action($Sys.start)
+	.command('init <path>')
+	.description('Initial the app with a root path')
+	.action($Sys.init)
+	.command('build <argv>')
+	.description('Build the system to the tarball and wait to deploy for webserver')
+	.action($Sys.build)
+	.parse(process.argv);
