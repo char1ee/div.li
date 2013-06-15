@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html ng-app="{{app.name}}">
+<head>
+  <meta charset="{{app.charset || 'utf-8' }}">
+  <title>{{app.title}}</title>
+  {{app.css | css}}
+  {{app.js | js}}
+</head>
+<body>
+{{app.content|include}}
+</body>
+{{app.afterbody | js}}
+</html>
+{{app.afterhtml | js}}
